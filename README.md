@@ -66,7 +66,25 @@ Durante os testes com imagens de operações logísticas, manutenção de TI e s
 ### Limitações e Gargalos (Crítica Técnica)
 * **A Cegueira Herdada (Gargalo da Borda):** A nuvem é refém da borda. Se o modelo YOLO local falhar em enviar um objeto no JSON (falso negativo), a LLM será "cega" àquele risco.
 * **Interpretação Estática da Confiança:** O relatório gera alertas sobre "confiança baixa (0.54)" supondo imagens borradas ou objetos ocultos. A LLM faz suposições inteligentes baseadas no dado estatístico, mas não "enxerga" o real motivo físico da baixa confiança.
-* **Generalização de Lotes:** Quando o lote processado mistura imagens de contextos muito diferentes (ex: um avião, uma sala de TI e um pátio de caminhões simultaneamente), o relatório tenta criar recomendações generalistas. Em produção, o ideal é que a segregação do JSON ocorra por câmera/setor para gerar inteligência direcionada.
+* **Generalização de Lotes:** Quando o lote processado mistura imagens de contextos muito diferentes (ex: um avião, uma sala de TI e um pátio de caminhões simultaneamente), o relatório tenta criar recomendações generalistas. Enviar lotes segregados por câmera ou setor otimizaria a precisão das respostas.
+
+O sistema atual atua como uma robusta Prova de Conceito (PoC). O modelo visual (`yolov8n.pt`) utilizado é treinado sobre o dataset COCO, o qual reconhece nativamente 80 classes genéricas. Por conta disso, o sistema apresenta a limitação técnica de não identificar artefatos industriais específicos, como bobinas de aço, maquinário pesado ou Equipamentos de Proteção Individual (EPIs).
+
+---
+
+## 🚀 Contextualização e Alinhamento com a Indústria 4.0
+
+A infraestrutura validada neste projeto, extrair dados analíticos na borda e gerar relatórios de suporte à decisão na nuvem, reflete a base arquitetônica real que grandes players do setor pesado utilizam comercialmente em larga escala. 
+
+### 1. Inspeção de Qualidade e Rastreamento de Ativos 
+* **Aplicação Real:** A **ArcelorMittal Brasil** implementou na unidade de Resende (RJ) o sistema *Standard Coil*, desenvolvido com o suporte do laboratório de inovação aberta Açolab. 
+* **Conexão com o Projeto:** O sistema deles utiliza o mesmo princípio de arquitetura deste repositório: câmeras integradas a algoritmos de visão computacional analisam bobinas de aço na linha de produção em tempo real para identificar não conformidades geométricas ou defeitos superficiais, alcançando cerca de 89% de assertividade. Adicionalmente, sistemas similares com análise inteligente na borda (*edge analytics*) operam nas plantas industriais monitorando zonas de risco para garantir o cumprimento estrito do uso de EPIs.
+
+### 2. Manutenção Preditiva e Redução de Riscos Operacionais (Caso Vale)
+* **Aplicação Real:** A **Vale** emprega sistemas avançados de visão computacional e inteligência artificial preditiva no monitoramento de ativos críticos, como quilômetros de esteiras transportadoras de minério de ferro.
+* **Conexão com o Projeto:** Dispositivos e sistemas de imagem na borda (como o dispositivo robótico ROSI) capturam o estado visual dos componentes, enquanto sensores de vibração e temperatura geram dados contínuos. Toda essa telemetria é convertida em pacotes estruturados de dados (equivalentes ao nosso formato JSON) e despachada para processamento cognitivo em nuvem. Modelos estatísticos e analíticos em nuvem cruzam as variáveis para antecipar falhas de maquinário semanas antes do evento físico ocorrer, retirando operários de áreas de risco e evitando paradas inesperadas na produção.
+
+Este repositório consolida, portanto, o esqueleto de software e a esteira de integração necessários para sustentar soluções corporativas equivalentes no cenário industrial.
 
 ---
 
@@ -84,7 +102,7 @@ Durante os testes com imagens de operações logísticas, manutenção de TI e s
 ```text
 ├── imagens_entrada/     # Imagens originais (matéria-prima) prontas para análise
 ├── resultados/          # Imagens anotadas e os relatórios em texto gerados pela LLM
-├── .env                 # Cofre de segurança contendo a GROQ_API_KEY
+├── .env                 # Conteúdo local protegido contendo a GROQ_API_KEY
 ├── .gitignore           # Bloqueio de upload de variáveis sensíveis
 ├── recom.py             # Módulo da Fase 1 (Visão Computacional Local)
 └── recom_groq.py        # Módulo da Fase 2 (Pipeline Integrado Edge-to-Cloud)
